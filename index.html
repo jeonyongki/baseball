@@ -93,6 +93,89 @@
             border-radius: 5px;
             display: inline-block;
         }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            z-index: 1000;
+            text-align: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .modal.show {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .modal-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .game-over-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            font-weight: bold;
+            color: #ff0000;
+            text-shadow: 
+                3px 3px 0 #000,
+                -3px -3px 0 #000,
+                3px -3px 0 #000,
+                -3px 3px 0 #000;
+            opacity: 0;
+            z-index: 1000;
+            pointer-events: none;
+        }
+
+        .game-over-text.show {
+            opacity: 1;
+            animation: shakeText 0.5s ease-in-out infinite;
+        }
+
+        @keyframes shakeText {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-52%, -48%) rotate(-5deg); }
+            75% { transform: translate(-48%, -52%) rotate(5deg); }
+        }
+
+        .container.game-over {
+            animation: containerShake 0.5s ease-in-out infinite;
+            filter: brightness(0.7);
+        }
+
+        @keyframes containerShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px) rotate(-0.5deg); }
+            75% { transform: translateX(10px) rotate(0.5deg); }
+        }
+
+        .game-over .number-btn {
+            opacity: 0.5;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -119,7 +202,14 @@
   
         <div id="result" class="display"></div>
         <div id="history"></div>
+        <div id="gameModal" class="modal">
+            <div class="modal-content"></div>
+            <button class="modal-button" onclick="closeModal()">새 게임 시작</button>
+        </div>
+        <div id="gameOverText" class="game-over-text">GAME OVER</div>
     </div>
+  
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   
     <script>
         let answer = generateAnswer();
@@ -228,10 +318,10 @@
                 resultText = `<span class="result-text success">🎉 축하합니다!\r\n${attempts}회 시도에 맞추셨습니다!</span>`;
                 historyDiv.innerHTML = `${attempts}회: ${currentGuess} = <span class="strike">${strike} 스트라이크</span>\r\n(승리!)🎉<br>` + historyDiv.innerHTML;
                 
+                celebrateWin();
                 setTimeout(() => {
-                    alert('축하합니다!\r\n승리하셨습니다!\r\n새 게임을 시작합니다.');
-                    startNewGame();
-                }, 500);
+                    showModal(`🎉 축하합니다!\n${attempts}회 시도에 맞추셨습니다!`);
+                }, 1000);
             } else {
                 let resultParts = [];
                 if(strike > 0) resultParts.push(`<span class="strike">${strike} 스트라이크</span>`);
@@ -246,10 +336,7 @@
                     resultDiv.innerHTML = `<span class="result-text out">게임 오버!\r\n패배했습니다.\r\n정답은 ${answer}였습니다!</span>`;
                     historyDiv.innerHTML = `게임 종료 - 패배\r\n(정답: ${answer})<br>` + historyDiv.innerHTML;
                     
-                    setTimeout(() => {
-                        alert('아쉽게도 패배했습니다.\r\n새 게임을 시작합니다.');
-                        startNewGame();
-                    }, 500);
+                    playDefeatAnimation();
                     return;
                 }
             }
@@ -262,6 +349,77 @@
             buttons.forEach(button => {
                 button.classList.remove('active');
             });
+        }
+  
+        function showModal(message) {
+            const modal = document.getElementById('gameModal');
+            modal.querySelector('.modal-content').innerHTML = message;
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('gameModal');
+            modal.classList.remove('show');
+            
+            const container = document.querySelector('.container');
+            container.classList.remove('game-over');
+            
+            const gameOverText = document.getElementById('gameOverText');
+            gameOverText.classList.remove('show');
+            
+            startNewGame();
+        }
+
+        function celebrateWin() {
+            const duration = 3000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({
+                    ...defaults,
+                    particleCount,
+                    origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 },
+                });
+                confetti({
+                    ...defaults,
+                    particleCount,
+                    origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 },
+                });
+            }, 250);
+        }
+  
+        function playDefeatAnimation() {
+            const container = document.querySelector('.container');
+            const gameOverText = document.getElementById('gameOverText');
+            
+            // Game Over 효과 적용
+            container.classList.add('game-over');
+            gameOverText.classList.add('show');
+            
+            // 숫자 버튼들 비활성화
+            const buttons = document.querySelectorAll('.number-btn');
+            buttons.forEach(button => {
+                button.disabled = true;
+            });
+            
+            // 2초 후에 모달 표시
+            setTimeout(() => {
+                gameOverText.classList.remove('show');
+                container.classList.remove('game-over');
+                showModal(`아쉽게도 패배했습니다.\n정답은 ${answer}였습니다!`);
+            }, 2000);
         }
   
         updateDisplay();
