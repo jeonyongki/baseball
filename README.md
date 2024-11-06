@@ -52,6 +52,6 @@
 
 👉 [게임하러 가기](https://jeonyongki.github.io/baseball/)
 
-[![게임 스크린샷](스크린샷_이미지_경로)](https://jeonyongki.github.io/baseball/)
+[![게임 스크린샷](./images/baseball-game.png)](https://jeonyongki.github.io/baseball/)
 
 즐거운 게임 되세요! 🎮
