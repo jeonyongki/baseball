@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>숫자 야구 게임</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        .number-pad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            max-width: 300px;
+            margin: 20px auto;
+        }
+        .number-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 15px;
+            font-size: 20px;
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .number-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.05);
+        }
+        .number-btn.active {
+            background: rgba(0, 255, 255, 0.4);
+            transform: scale(0.95);
+        }
+        .display {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 24px;
+            margin: 20px 0;
+            min-height: 30px;
+        }
+        .control-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 16px;
+        }
+        #history {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .result-text {
+            font-weight: bold;
+            font-size: 28px;
+            white-space: pre-line;
+            line-height: 1.4;
+        }
+        .strike { color: #00ff00; }
+        .ball { color: #ffd700; }
+        .out { color: #ff4444; }
+        .success { color: #00ffff; }
+        .inning-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ffd700;
+            margin: 10px 0;
+            padding: 5px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚾ 숫자 야구 게임</h1>
+        <div id="inning" class="inning-display">남은 기회: 9회</div>
+        <p>서로 다른 숫자 3자리를 입력하세요!</p>
+        <div class="display" id="currentGuess"></div>
+        
+        <div class="number-pad">
+            <button class="number-btn" onclick="addNumber('1')">1</button>
+            <button class="number-btn" onclick="addNumber('2')">2</button>
+            <button class="number-btn" onclick="addNumber('3')">3</button>
+            <button class="number-btn" onclick="addNumber('4')">4</button>
+            <button class="number-btn" onclick="addNumber('5')">5</button>
+            <button class="number-btn" onclick="addNumber('6')">6</button>
+            <button class="number-btn" onclick="addNumber('7')">7</button>
+            <button class="number-btn" onclick="addNumber('8')">8</button>
+            <button class="number-btn" onclick="addNumber('9')">9</button>
+            <button class="number-btn" onclick="clearGuess()">C</button>
+            <button class="number-btn" onclick="addNumber('0')">0</button>
+            <button class="number-btn" onclick="checkNumber()">✓</button>
+        </div>
+  
+        <div id="result" class="display"></div>
+        <div id="history"></div>
+    </div>
+  
+    <script>
+        let answer = generateAnswer();
+        let attempts = 0;
+        const MAX_ATTEMPTS = 9; // 최대 시도 횟수를 9번으로 설정
+        let currentGuess = '';
+  
+        function startNewGame() {
+            answer = generateAnswer();
+            attempts = 0;
+            currentGuess = '';
+            
+            // 화면 초기화
+            document.getElementById('result').innerHTML = '';
+            document.getElementById('history').innerHTML = '';
+            document.getElementById('currentGuess').innerHTML = '⚾'.repeat(3);
+            document.getElementById('inning').innerHTML = `남은 기회: ${MAX_ATTEMPTS}회`;
+            
+            // 버튼 활성화
+            const buttons = document.querySelectorAll('.number-btn');
+            buttons.forEach(button => {
+                button.disabled = false;
+                button.classList.remove('active');
+            });
+        }
+  
+        function addNumber(num) {
+            if (currentGuess.length < 3) {
+                if (currentGuess.includes(num)) {
+                    alert('같은 숫자는 사용할 수 없습니다!');
+                    return;
+                }
+                currentGuess += num;
+                updateDisplay();
+                
+                const buttons = document.querySelectorAll('.number-btn');
+                buttons.forEach(button => {
+                    if (button.textContent === num) {
+                        button.classList.add('active');
+                    }
+                });
+            }
+        }
+  
+        function clearGuess() {
+            currentGuess = '';
+            updateDisplay();
+            
+            const buttons = document.querySelectorAll('.number-btn');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+        }
+  
+        function updateDisplay() {
+            document.getElementById('currentGuess').innerHTML = 
+                currentGuess + '⚾'.repeat(3 - currentGuess.length);
+        }
+  
+        function generateAnswer() {
+            let numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+            let answer = '';
+            
+            // 첫 번째 숫자는 0이 될 수 없음
+            let firstNum = Math.floor(Math.random() * 9) + 1;
+            answer += numbers[firstNum];
+            numbers.splice(firstNum, 1);
+            
+            // 나머지 두 숫자 선택
+            for(let i = 0; i < 2; i++) {
+                let index = Math.floor(Math.random() * numbers.length);
+                answer += numbers[index];
+                numbers.splice(index, 1);
+            }
+            
+            return answer;
+        }
+  
+        function checkNumber() {
+            if(currentGuess.length !== 3) {
+                alert('3자리 숫자를 모두 입력해주세요!');
+                return;
+            }
+  
+            attempts++;
+            let remainingAttempts = MAX_ATTEMPTS - attempts;
+            document.getElementById('inning').innerHTML = `남은 이닝: ${remainingAttempts}회`;
+  
+            let strike = 0;
+            let ball = 0;
+  
+            for(let i = 0; i < 3; i++) {
+                if(currentGuess[i] === answer[i]) {
+                    strike++;
+                } else if(answer.includes(currentGuess[i])) {
+                    ball++;
+                }
+            }
+  
+            let out = 3 - (strike + ball);
+            let resultDiv = document.getElementById('result');
+            let historyDiv = document.getElementById('history');
+            
+            let resultText = '';
+            if(strike === 3) {
+                resultText = `<span class="result-text success">🎉 축하합니다!\r\n${attempts}번째 시도에 맞추셨습니다!</span>`;
+                historyDiv.innerHTML = `${attempts}번째: ${currentGuess} = <span class="strike">${strike} 스트라이크</span>\r\n(승리!)🎉<br>` + historyDiv.innerHTML;
+                
+                setTimeout(() => {
+                    alert('축하합니다!\r\n승리하셨습니다!\r\n새 게임을 시작합니다.');
+                    startNewGame();
+                }, 500);
+            } else {
+                let resultParts = [];
+                if(strike > 0) resultParts.push(`<span class="strike">${strike} 스트라이크</span>`);
+                if(ball > 0) resultParts.push(`<span class="ball">${ball} 볼</span>`);
+                if(out > 0) resultParts.push(`<span class="out">${out} 아웃</span>`);
+                
+                resultText = `<span class="result-text">${resultParts.join(' ')}</span>`;
+                historyDiv.innerHTML = `${attempts}회: ${currentGuess} = ${resultParts.join(' ')}<br>` + historyDiv.innerHTML;
+                
+                // 남은 기회가 없는지 체크
+                if(attempts >= MAX_ATTEMPTS) {
+                    resultDiv.innerHTML = `<span class="result-text out">게임 오버!\r\n패배했습니다.\r\n정답은 ${answer}였습니다!</span>`;
+                    historyDiv.innerHTML = `게임 종료 - 패배\r\n(정답: ${answer})<br>` + historyDiv.innerHTML;
+                    
+                    setTimeout(() => {
+                        alert('아쉽게도 패배했습니다.\r\n새 게임을 시작합니다.');
+                        startNewGame();
+                    }, 500);
+                    return;
+                }
+            }
+  
+            resultDiv.innerHTML = resultText;
+            currentGuess = '';
+            updateDisplay();
+            
+            const buttons = document.querySelectorAll('.number-btn');
+            buttons.forEach(button => {
+                button.classList.remove('active');
+            });
+        }
+  
+        updateDisplay();
+    </script>  
+</body>
+</html>
