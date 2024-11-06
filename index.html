@@ -225,8 +225,8 @@
             
             let resultText = '';
             if(strike === 3) {
-                resultText = `<span class="result-text success">🎉 축하합니다!\r\n${attempts}번째 시도에 맞추셨습니다!</span>`;
-                historyDiv.innerHTML = `${attempts}번째: ${currentGuess} = <span class="strike">${strike} 스트라이크</span>\r\n(승리!)🎉<br>` + historyDiv.innerHTML;
+                resultText = `<span class="result-text success">🎉 축하합니다!\r\n${attempts}회 시도에 맞추셨습니다!</span>`;
+                historyDiv.innerHTML = `${attempts}회: ${currentGuess} = <span class="strike">${strike} 스트라이크</span>\r\n(승리!)🎉<br>` + historyDiv.innerHTML;
                 
                 setTimeout(() => {
                     alert('축하합니다!\r\n승리하셨습니다!\r\n새 게임을 시작합니다.');
