@@ -226,7 +226,7 @@
             document.getElementById('result').innerHTML = '';
             document.getElementById('history').innerHTML = '';
             document.getElementById('currentGuess').innerHTML = '⚾'.repeat(3);
-            document.getElementById('inning').innerHTML = `남은 기회: ${MAX_ATTEMPTS}회`;
+            document.getElementById('inning').innerHTML = `남은 이닝: ${MAX_ATTEMPTS}회`;
             
             // 버튼 활성화
             const buttons = document.querySelectorAll('.number-btn');
@@ -331,7 +331,7 @@
                 resultText = `<span class="result-text">${resultParts.join(' ')}</span>`;
                 historyDiv.innerHTML = `${attempts}회: ${currentGuess} = ${resultParts.join(' ')}<br>` + historyDiv.innerHTML;
                 
-                // 남은 기회가 없는지 체크
+                // 남은 이닝 없는지 체크
                 if(attempts >= MAX_ATTEMPTS) {
                     resultDiv.innerHTML = `<span class="result-text out">게임 오버!\r\n패배했습니다.\r\n정답은 ${answer}였습니다!</span>`;
                     historyDiv.innerHTML = `게임 종료 - 패배\r\n(정답: ${answer})<br>` + historyDiv.innerHTML;
