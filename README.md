@@ -48,6 +48,10 @@
 
 게임의 메인 화면입니다. 숫자 버튼, 게임 상태, 히스토리를 확인할 수 있습니다.
 
-![야구게임 스크린샷](./images/baseball-game.png)
+## 게임 플레이
+
+👉 [게임하러 가기](https://jeonyongki.github.io/baseball/)
+
+[![게임 스크린샷](스크린샷_이미지_경로)](https://jeonyongki.github.io/baseball/)
 
 즐거운 게임 되세요! 🎮
