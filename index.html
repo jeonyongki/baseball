@@ -93,8 +93,8 @@
         }
   
         function updateDisplay() {
-            document.getElementById('currentGuess').innerHTML = 
-                currentGuess + '⚾'.repeat(3 - currentGuess.length);
+            const displayText = currentGuess.split('').join('    ') + ('    ⚾').repeat(3 - currentGuess.length);
+            document.getElementById('currentGuess').innerHTML = displayText;
         }
   
         function generateAnswer() {
