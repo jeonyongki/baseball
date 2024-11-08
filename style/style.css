@@ -210,3 +210,15 @@ body {
   opacity: 0.5;
   pointer-events: none;
 }
+
+.result-text.info {
+    color: #666;
+    font-size: 0.9em;
+}
+
+.history-info {
+    color: #666;
+    padding: 10px;
+    text-align: center;
+    margin: 10px 0;
+}
