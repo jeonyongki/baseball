@@ -42,7 +42,7 @@
 
 ## 스크린샷
 
-게임의 메인 화면입니다.
+게임의 메인 화면입니다.  
 숫자 버튼, 게임 상태, 히스토리를 확인할 수 있습니다.
 
 [![게임 스크린샷](./images/baseball-game.png)](https://jeonyongki.github.io/baseball/)
