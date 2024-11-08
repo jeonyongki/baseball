@@ -256,6 +256,18 @@
         // 초기 화면 설정
         startNewGame();
         updateDisplay();
-    </script>  
+
+        // 페이지 소스 보기 차단
+        document.addEventListener('contextmenu', function(e) {
+        e.preventDefault();
+        });
+
+        document.addEventListener('keydown', function(e) {
+        if (e.key === 'U' && (e.ctrlKey || e.metaKey)) {
+            e.preventDefault();
+            alert('Sorry, viewing the page source is not allowed.');
+        }
+        });
+    </script>
 </body>
 </html>
