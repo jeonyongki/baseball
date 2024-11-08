@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Sitemap: https://jeonyongki.github.io/baseball/sitemap.xml
+Disallow: /view-source
