@@ -30,22 +30,61 @@
             margin: 20px auto;
         }
         .number-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            padding: 15px;
-            font-size: 20px;
+            background: linear-gradient(145deg, #2a5298, #1e3c72);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            font-size: 24px;
             color: white;
-            border-radius: 10px;
+            border-radius: 15px;
             cursor: pointer;
             transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .number-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                120deg,
+                transparent,
+                rgba(255, 255, 255, 0.2),
+                transparent
+            );
+            transition: 0.5s;
         }
         .number-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
+            background: linear-gradient(145deg, #326ab8, #234182);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        .number-btn:hover::before {
+            left: 100%;
         }
         .number-btn.active {
-            background: rgba(0, 255, 255, 0.4);
-            transform: scale(0.95);
+            background: linear-gradient(145deg, #00ccff, #0099ff);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: scale(0.95) translateY(2px);
+            box-shadow: 
+                0 2px 10px rgba(0, 153, 255, 0.5),
+                0 0 20px rgba(0, 153, 255, 0.3);
+            animation: activeGlow 1s ease-in-out infinite alternate;
+        }
+        @keyframes activeGlow {
+            from {
+                box-shadow: 
+                    0 2px 10px rgba(0, 153, 255, 0.5),
+                    0 0 20px rgba(0, 153, 255, 0.3);
+            }
+            to {
+                box-shadow: 
+                    0 2px 15px rgba(0, 153, 255, 0.7),
+                    0 0 30px rgba(0, 153, 255, 0.5);
+            }
         }
         .display {
             background: rgba(0, 0, 0, 0.2);
@@ -315,12 +354,12 @@
             
             let resultText = '';
             if(strike === 3) {
-                resultText = `<span class="result-text success">🎉 축하합니다!\r\n${attempts}회 시도에 맞추셨습니다!</span>`;
-                historyDiv.innerHTML = `${attempts}회: ${currentGuess} = <span class="strike">${strike} 스트라이크</span>\r\n(승리!)🎉<br>` + historyDiv.innerHTML;
+                resultText = `<span class="result-text success">🎉 축하합니다!<br>${attempts}회 시도에 맞추셨습니다!</span>`;
+                historyDiv.innerHTML = `${attempts}회: ${currentGuess} = <span class="strike">${strike} 스트라이크</span><br>(승리!)🎉<br>` + historyDiv.innerHTML;
                 
                 celebrateWin();
                 setTimeout(() => {
-                    showModal(`🎉 축하합니다!\n${attempts}회 시도에 맞추셨습니다!`);
+                    showModal(`🎉 축하합니다!<br>${attempts}회 시도에 맞추셨습니다!`);
                 }, 1000);
             } else {
                 let resultParts = [];
@@ -333,8 +372,8 @@
                 
                 // 남은 이닝 없는지 체크
                 if(attempts >= MAX_ATTEMPTS) {
-                    resultDiv.innerHTML = `<span class="result-text out">게임 오버!\r\n패배했습니다.\r\n정답은 ${answer}였습니다!</span>`;
-                    historyDiv.innerHTML = `게임 종료 - 패배\r\n(정답: ${answer})<br>` + historyDiv.innerHTML;
+                    resultDiv.innerHTML = `<span class="result-text out">게임 오버!<br>패배했습니다.<br>정답은 ${answer}였습니다!</span>`;
+                    historyDiv.innerHTML = `게임 종료 - 패배<br>(정답: ${answer})<br>` + historyDiv.innerHTML;
                     
                     playDefeatAnimation();
                     return;
@@ -418,7 +457,7 @@
             setTimeout(() => {
                 gameOverText.classList.remove('show');
                 container.classList.remove('game-over');
-                showModal(`아쉽게도 패배했습니다.\n정답은 ${answer}였습니다!`);
+                showModal(`아쉽게도 패배했습니다.<br>정답은 ${answer}였습니다!`);
             }, 2000);
         }
   
